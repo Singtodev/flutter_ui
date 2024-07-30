@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_ui/models/trip_response.dart';
+import 'package:flutter_ui/services/trip.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ShowTripPage extends StatefulWidget {
   const ShowTripPage({super.key});
@@ -9,6 +12,24 @@ class ShowTripPage extends StatefulWidget {
 }
 
 class _ShowTripPageState extends State<ShowTripPage> {
+  late TripService tripSrv = TripService();
+
+  List<TripResponse> _trips = [];
+  @override
+  void initState() {
+    super.initState();
+    fetchTrip();
+  }
+
+  Future<void> fetchTrip() async {
+    await tripSrv.getTrips().then((trips) {
+      setState(() {
+        _trips = trips;
+      });
+      // ignore: invalid_return_type_for_catch_error
+    }).catchError((error) => {debugPrint(error.toString())});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,48 +46,17 @@ class _ShowTripPageState extends State<ShowTripPage> {
                 scrollNavigation(),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Column(children: [
-                      CardTrip(
-                        title: "UnseenSwitzerland",
-                        image:
-                            'https://happylongway.com/wp-content/uploads/2019/01/GORNERGRAT-800x500.jpg',
-                        country: 'ประเทศสวิตเซอร์แลนด์',
-                        price: 'ราคา 119900 บาท',
-                        duration: 'ระยะเวลา 10 วัน',
-                      ),
-                      CardTrip(
-                        title: "Merlion Park",
-                        image:
-                            'https://www.ktc.co.th/pub/media/Travel-Story/Asia/travel-in-singapore/Merlion-Park.webp',
-                        country: 'ประเทศสิงคโปร',
-                        price: 'ราคา 119900 บาท',
-                        duration: 'ระยะเวลา 10 วัน',
-                      ),
-                      CardTrip(
-                        title: "Sunworld  Ba Na Hills",
-                        image:
-                            'https://www.you.co/th/wp-content/uploads/sites/9/2020/06/Ba-Na-Hills.jpg',
-                        country: 'ประเทศเวียดนาม',
-                        price: 'ราคา 119900 บาท',
-                        duration: 'ระยะเวลา 10 วัน',
-                      ),
-                      CardTrip(
-                        title: "Cong Vien Apec",
-                        image:
-                            'https://www.you.co/th/wp-content/uploads/sites/9/2020/06/Cong-Vien-Apec.jpg',
-                        country: 'ประเทศเวียดนาม',
-                        price: 'ราคา 119900 บาท',
-                        duration: 'ระยะเวลา 10 วัน',
-                      ),
-                      CardTrip(
-                        title: "Cong Vien Apec 1",
-                        image:
-                            'https://www.you.co/th/wp-content/uploads/sites/9/2020/06/Cong-Vien-Apec.jpg',
-                        country: 'ประเทศเวียดนาม',
-                        price: 'ราคา 119900 บาท',
-                        duration: 'ระยะเวลา 10 วัน',
-                      ),
-                    ]),
+                    child: Column(
+                        children: _trips
+                            .map((trip) => CardTrip(
+                                  title: trip.name.toString(),
+                                  image: trip.coverimage.toString(),
+                                  country: trip.country.toString(),
+                                  price: "ราคา ${trip.price.toString()}",
+                                  duration:
+                                      'ระยะเวลา ${trip.duration.toString()} วัน',
+                                ))
+                            .toList()),
                   ),
                 )
               ],
@@ -135,7 +125,13 @@ class CardTrip extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: 160.w,
-                    child: Image.network(image),
+                    child: CachedNetworkImage(
+                      imageUrl: image.toString(),
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    ),
                   ),
                   SizedBox(
                     width: 10.w,

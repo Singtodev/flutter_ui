@@ -1,9 +1,15 @@
 // ignore_for_file: avoid_print, unnecessary_brace_in_string_interps
+import 'dart:convert';
 
+import 'package:flutter_ui/models/customer_post_response.dart';
+import 'package:flutter_ui/models/customer_login_post_request.dart';
+import 'package:flutter_ui/services/auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_ui/pages/register.dart';
 import 'package:flutter_ui/pages/showtrip.dart';
+import '../configs/environment.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
@@ -144,18 +150,25 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         context, MaterialPageRoute(builder: (context) => const RegisterPage()));
   }
 
-  void loginAction() {
-    if (phoneNumberController.text == "0812345678" &&
-        passwordController.text == "1234") {
-      setState(() {
-        text = "Login Successfully";
-      });
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const ShowTripPage()));
-    } else {
-      setState(() {
-        text = "Phone no or password incorrect";
-      });
-    }
+  Future<void> loginAction() async {
+    AuthenticationService authSrv = AuthenticationService();
+    var bodyData = CustomerLoginPostRequest(
+        phone: phoneNumberController.text, password: passwordController.text);
+    await authSrv
+        .login(bodyData)
+        .then((res) => {
+              setState(() {
+                text = "Login Successfully Welcome Back ${res.customer!.email}";
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ShowTripPage()));
+              })
+            })
+        .catchError((error) => {
+              setState(() {
+                text = error.toString();
+              })
+            });
   }
 }

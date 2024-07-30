@@ -1,5 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_ui/models/customer_created_response.dart';
+import 'package:flutter_ui/models/customer_post_body.dart';
+import 'package:flutter_ui/services/auth.dart';
+import '../configs/environment.dart';
+import 'dart:developer';
+import 'package:http/http.dart' as http;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   late TextEditingController passwordController = TextEditingController();
   late TextEditingController confirmPasswordController =
       TextEditingController();
-
+  late AuthenticationService authSrv = AuthenticationService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,62 +72,128 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: true,
                     enableSuggestions: false,
                   ),
-                  const FooterAction()
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 180.w,
+                              child: FilledButton(
+                                  onPressed: () => {registerAction()},
+                                  child: Text(
+                                    'สมัครสมาชิก',
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'หากมีบัญชีอยู่แล้ว',
+                            style:
+                                TextStyle(fontSize: 14.sp, color: Colors.black),
+                          ),
+                          TextButton(
+                              onPressed: () => {Navigator.pop(context)},
+                              child: Text(
+                                'เข้าสู่ระบบ',
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                ),
+                              )),
+                        ],
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
           ),
         ));
   }
-}
 
-class FooterAction extends StatelessWidget {
-  const FooterAction({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 180.w,
-                child: FilledButton(
-                    onPressed: () => {},
-                    child: Text(
-                      'เข้าสู่ระบบ',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                      ),
-                    )),
+  Future<void> registerAction() async {
+    if (fullNameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        phoneNumberController.text.isEmpty) {
+      // If any field is empty, return early without making the request
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Alert'),
+            content: const Text('Notification'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
               ),
             ],
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'หากมีบัญชีอยู่แล้ว',
-              style: TextStyle(fontSize: 14.sp, color: Colors.black),
-            ),
-            TextButton(
-                onPressed: () => {Navigator.pop(context)},
-                child: Text(
-                  'เข้าสู่ระบบ',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                  ),
-                )),
-          ],
-        ),
-      ],
-    );
+          );
+        },
+      );
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Notification'),
+            content: const Text('Password not matched'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    CustomerPostBody bodyData = CustomerPostBody(
+        fullname: fullNameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        phone: phoneNumberController.text,
+        image: "");
+    await authSrv
+        .register(bodyData)
+        .then((res) => {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Notification'),
+                    content: const Text('Register Successfully!'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              )
+            })
+        // ignore: invalid_return_type_for_catch_error
+        .catchError((error) => {debugPrint(error.toString())});
   }
 }
 
