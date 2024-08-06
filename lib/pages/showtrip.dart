@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_ui/models/trip_response.dart';
+import 'package:flutter_ui/pages/show_trip_id.dart';
 import 'package:flutter_ui/services/trip.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -57,7 +58,7 @@ class _ShowTripPageState extends State<ShowTripPage> {
           backgroundColor: Colors.white,
         ),
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Column(
@@ -78,18 +79,19 @@ class _ShowTripPageState extends State<ShowTripPage> {
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
                             final trip = snapshot.data![index];
-                            return GestureDetector(
-                              onTap: () {
-                                debugPrint("Tapped trip: ${trip.name}");
-                              },
-                              child: CardTrip(
+                            return CardTrip(
                                 title: trip.name ?? '',
                                 image: trip.coverimage ?? '',
                                 country: trip.country ?? '',
                                 price: "ราคา ${trip.price ?? ''}",
                                 duration: 'ระยะเวลา ${trip.duration ?? ''} วัน',
-                              ),
-                            );
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ShowTripIdPage(
+                                              tripId: trip.idx.toString())));
+                                });
                           },
                         );
                       }
@@ -136,13 +138,15 @@ class _ShowTripPageState extends State<ShowTripPage> {
 
 // ignore: must_be_immutable
 class CardTrip extends StatelessWidget {
+  final VoidCallback? onTap;
   CardTrip(
       {super.key,
       required this.title,
       required this.image,
       required this.country,
       required this.price,
-      required this.duration});
+      required this.duration,
+      required this.onTap});
 
   late String title = "";
   late String image = "";
@@ -175,7 +179,7 @@ class CardTrip extends StatelessWidget {
               Row(
                 children: [
                   SizedBox(
-                    width: 160.w,
+                    width: 160,
                     child: CachedNetworkImage(
                       imageUrl: image.toString(),
                       placeholder: (context, url) =>
@@ -184,8 +188,8 @@ class CardTrip extends StatelessWidget {
                           const Icon(Icons.error),
                     ),
                   ),
-                  SizedBox(
-                    width: 10.w,
+                  const SizedBox(
+                    width: 10,
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -206,7 +210,9 @@ class CardTrip extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: FilledButton(
-                            onPressed: () => {},
+                            onPressed: () => {
+                                  if (onTap != null) {onTap!()}
+                                },
                             child: const Text(
                               'รายละเอียดเพิ่มเตืม',
                               style: TextStyle(
