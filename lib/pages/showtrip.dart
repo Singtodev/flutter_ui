@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_ui/models/trip_response.dart';
@@ -13,18 +15,38 @@ class ShowTripPage extends StatefulWidget {
 
 class _ShowTripPageState extends State<ShowTripPage> {
   late TripService tripSrv = TripService();
-
+  String selectedZone = "";
+  late Future<List<TripResponse>> tripsFuture;
   @override
   void initState() {
     super.initState();
+    tripsFuture = fetchTrip();
   }
 
-  Future<List<TripResponse>> fetchTrip({String zone = ""}) async {
-    await Future.delayed(const Duration(seconds: 1));
-    return await tripSrv.getTrips().then((List<TripResponse> trips) {
-      return trips;
-      // ignore: invalid_return_type_for_catch_error
-    }).catchError((error) => {});
+  Future<List<TripResponse>> fetchTrip() async {
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      List<TripResponse> trips = await tripSrv.getTrips();
+      if (selectedZone.isEmpty) {
+        return trips;
+      } else {
+        return trips.where((TripResponse trip) {
+          String tripZone =
+              destinationZoneValues.reverse[trip.destinationZone] ?? "";
+          return tripZone == selectedZone;
+        }).toList();
+      }
+    } catch (error) {
+      debugPrint("Error fetching trips: $error");
+      return [];
+    }
+  }
+
+  void updateTrips(String zone) {
+    setState(() {
+      selectedZone = zone;
+      tripsFuture = fetchTrip();
+    });
   }
 
   @override
@@ -43,7 +65,7 @@ class _ShowTripPageState extends State<ShowTripPage> {
                 scrollNavigation(),
                 Expanded(
                   child: FutureBuilder<List<TripResponse>>(
-                    future: fetchTrip(),
+                    future: tripsFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -86,11 +108,26 @@ class _ShowTripPageState extends State<ShowTripPage> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          CategoryItem(label: "ทั้งหมด"),
-          CategoryItem(label: "เอเชีย"),
-          CategoryItem(label: "ยุโรป"),
-          CategoryItem(label: "อาเซี่ยน"),
-          CategoryItem(label: "อเมริกา"),
+          CategoryItem(
+            label: "ทั้งหมด",
+            onTap: () => updateTrips(""),
+          ),
+          CategoryItem(
+            label: "เอเชีย",
+            onTap: () => updateTrips("เอเชีย"),
+          ),
+          CategoryItem(
+            label: "เอเชียตะวันออกเฉียงใต้",
+            onTap: () => updateTrips("เอเชียตะวันออกเฉียงใต้"),
+          ),
+          CategoryItem(
+            label: "ยุโรป",
+            onTap: () => updateTrips("ยุโรป"),
+          ),
+          CategoryItem(
+            label: "ประเทศไทย",
+            onTap: () => updateTrips("ประเทศไทย"),
+          ),
         ],
       ),
     ));
@@ -189,20 +226,25 @@ class CardTrip extends StatelessWidget {
 
 // ignore: must_be_immutable
 class CategoryItem extends StatelessWidget {
-  CategoryItem({super.key, required this.label});
-
+  final VoidCallback? onTap;
   late String label = "";
-
+  CategoryItem({super.key, required this.label, this.onTap});
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 3.sp),
       child: FilledButton(
-          onPressed: () {},
+          onPressed: () {
+            debugPrint("Tapped category: $label");
+            // updateTrips(label);
+            if (onTap != null) {
+              onTap!();
+            }
+          },
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 14.sp,
+            style: const TextStyle(
+              fontSize: 14,
             ),
           )),
     );
