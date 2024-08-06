@@ -43,18 +43,18 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     child: Image.asset('assets/images/logo.png')),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Column(
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          padding: EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             'หมายเลขโทรศัพท์',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -66,23 +66,23 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       child: TextField(
                         controller: phoneNumberController,
                         keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            contentPadding: EdgeInsets.all(10.w)),
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.all(10)),
                       ),
                     )
                   ],
                 ),
               ),
-              SizedBox(height: 10.h),
+              const SizedBox(height: 10),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Column(
                   children: [
                     Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Text(
                             'รหัสผ่าน',
                             style: TextStyle(
@@ -95,47 +95,47 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       ],
                     ),
                     SizedBox(
-                      height: 40.h,
+                      height: 40,
                       child: TextField(
                         controller: passwordController,
                         obscureText: true,
                         enableSuggestions: false,
-                        decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            contentPadding: EdgeInsets.all(10.w)),
+                        decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.all(10)),
                       ),
                     )
                   ],
                 ),
               ),
-              SizedBox(height: 10.h),
+              const SizedBox(height: 10),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: Column(children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextButton(
                             onPressed: registerAction,
-                            child: Text(
+                            child: const Text(
                               'ลงทะเบียนใหม่',
                               style: TextStyle(
-                                fontSize: 14.sp,
+                                fontSize: 14,
                               ),
                             )),
                         FilledButton(
                             onPressed: loginAction,
-                            child: Text(
+                            child: const Text(
                               'เข้าสู่ระบบ',
                               style: TextStyle(
-                                fontSize: 14.sp,
+                                fontSize: 14,
                               ),
                             )),
                       ],
                     )
                   ])),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0.h),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(text),
               ),
             ],

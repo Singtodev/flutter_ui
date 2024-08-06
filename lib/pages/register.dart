@@ -34,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
           width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   InputBox(
@@ -75,7 +75,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -83,10 +83,10 @@ class _RegisterPageState extends State<RegisterPage> {
                               width: 180.w,
                               child: FilledButton(
                                   onPressed: () => {registerAction()},
-                                  child: Text(
+                                  child: const Text(
                                     'สมัครสมาชิก',
                                     style: TextStyle(
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                     ),
                                   )),
                             ),
@@ -96,10 +96,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'หากมีบัญชีอยู่แล้ว',
-                            style:
-                                TextStyle(fontSize: 14.sp, color: Colors.black),
+                            style: TextStyle(fontSize: 14, color: Colors.black),
                           ),
                           TextButton(
                               onPressed: () => {Navigator.pop(context)},
@@ -219,7 +218,7 @@ class InputBox extends StatelessWidget {
         Row(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.h),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 title,
                 style: TextStyle(
@@ -238,9 +237,9 @@ class InputBox extends StatelessWidget {
             enableSuggestions: enableSuggestions,
             controller: controller,
             keyboardType: type,
-            decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                contentPadding: EdgeInsets.all(10.w)),
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.all(10)),
           ),
         ),
       ],

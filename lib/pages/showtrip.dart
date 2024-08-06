@@ -104,15 +104,14 @@ class CardTrip extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: Card(
         elevation: 5.sp,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.sp)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(children: [
               Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: 6.sp),
+                    padding: const EdgeInsets.only(bottom: 6),
                     child: Text(
                       title,
                       style: TextStyle(
@@ -142,24 +141,24 @@ class CardTrip extends StatelessWidget {
                     children: [
                       Text(
                         country,
-                        style: TextStyle(fontSize: 14.sp),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       Text(
                         duration,
-                        style: TextStyle(fontSize: 14.sp),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       Text(
                         price,
-                        style: TextStyle(fontSize: 14.sp),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 10.h),
+                        padding: const EdgeInsets.only(top: 10),
                         child: FilledButton(
                             onPressed: () => {},
-                            child: Text(
+                            child: const Text(
                               'รายละเอียดเพิ่มเตืม',
                               style: TextStyle(
-                                fontSize: 12.sp,
+                                fontSize: 12,
                               ),
                             )),
                       ),
