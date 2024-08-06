@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_ui/models/customer_post_response.dart';
 import 'package:flutter_ui/models/customer_login_post_request.dart';
+import 'package:flutter_ui/pages/profile.dart';
 import 'package:flutter_ui/services/auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -162,7 +163,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ShowTripPage()));
+                        builder: (context) =>
+                            ProfilePage(userId: res.customer!.idx.toString())));
               })
             })
         .catchError((error) => {
