@@ -221,9 +221,9 @@ class InputBox extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -231,7 +231,7 @@ class InputBox extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 40.h,
+          height: 40,
           child: TextField(
             obscureText: obscureText,
             enableSuggestions: enableSuggestions,

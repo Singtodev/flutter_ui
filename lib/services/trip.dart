@@ -12,7 +12,7 @@ class TripService {
     if (response.statusCode == 200) {
       return tripResponseFromJson(response.body);
     } else {
-      throw Exception('Failed to login: ${response.statusCode}');
+      throw Exception('Failed to get trips: ${response.statusCode}');
     }
   }
 
@@ -24,7 +24,7 @@ class TripService {
     if (response.statusCode == 200) {
       return tripDataResponseFromJson(response.body);
     } else {
-      throw Exception('Failed to login: ${response.statusCode}');
+      throw Exception('Failed to get trip: ${response.statusCode}');
     }
   }
 }
