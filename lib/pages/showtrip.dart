@@ -14,20 +14,17 @@ class ShowTripPage extends StatefulWidget {
 class _ShowTripPageState extends State<ShowTripPage> {
   late TripService tripSrv = TripService();
 
-  List<TripResponse> _trips = [];
   @override
   void initState() {
     super.initState();
-    fetchTrip();
   }
 
-  Future<void> fetchTrip() async {
-    await tripSrv.getTrips().then((trips) {
-      setState(() {
-        _trips = trips;
-      });
+  Future<List<TripResponse>> fetchTrip({String zone = ""}) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return await tripSrv.getTrips().then((List<TripResponse> trips) {
+      return trips;
       // ignore: invalid_return_type_for_catch_error
-    }).catchError((error) => {debugPrint(error.toString())});
+    }).catchError((error) => {});
   }
 
   @override
@@ -45,20 +42,38 @@ class _ShowTripPageState extends State<ShowTripPage> {
               children: [
                 scrollNavigation(),
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                        children: _trips
-                            .map((trip) => CardTrip(
-                                  title: trip.name.toString(),
-                                  image: trip.coverimage.toString(),
-                                  country: trip.country.toString(),
-                                  price: "ราคา ${trip.price.toString()}",
-                                  duration:
-                                      'ระยะเวลา ${trip.duration.toString()} วัน',
-                                ))
-                            .toList()),
+                  child: FutureBuilder<List<TripResponse>>(
+                    future: fetchTrip(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No trips available'));
+                      } else {
+                        return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final trip = snapshot.data![index];
+                            return GestureDetector(
+                              onTap: () {
+                                debugPrint("Tapped trip: ${trip.name}");
+                              },
+                              child: CardTrip(
+                                title: trip.name ?? '',
+                                image: trip.coverimage ?? '',
+                                country: trip.country ?? '',
+                                price: "ราคา ${trip.price ?? ''}",
+                                duration: 'ระยะเวลา ${trip.duration ?? ''} วัน',
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
                   ),
-                )
+                ),
               ],
             ),
           ),
